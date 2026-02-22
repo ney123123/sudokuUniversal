@@ -10,8 +10,10 @@ final class GameStateManager {
         hasUnfinishedGame = false
     }
 
+    var currentDifficulty: String? = nil
+
     func resumeRoute() -> AppRoute? {
-        guard hasUnfinishedGame, let gameType = currentGameType else { return nil }
-        return .game(gameType)
+        guard hasUnfinishedGame, let gameType = currentGameType, let difficulty = currentDifficulty else { return nil }
+        return .game(gameType, difficulty)
     }
 }

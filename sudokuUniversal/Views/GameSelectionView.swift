@@ -12,7 +12,7 @@ struct GameSelectionView: View {
             LazyVGrid(columns: columns, spacing: 16) {
                 ForEach(Array(SudokuGameType.allCases.enumerated()), id: \.element.id) { index, gameType in
                     GameTypeCard(gameType: gameType) {
-                        navigationPath.append(AppRoute.game(gameType))
+                        navigationPath.append(AppRoute.difficultySelection(gameType))
                     }
                     .opacity(appeared ? 1 : 0)
                     .offset(y: appeared ? 0 : 20)

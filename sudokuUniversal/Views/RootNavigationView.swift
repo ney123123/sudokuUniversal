@@ -11,8 +11,15 @@ struct RootNavigationView: View {
                     switch route {
                     case .gameSelection:
                         GameSelectionView(navigationPath: $navigationPath)
-                    case .game(let type):
-                        GamePlaceholderView(gameType: type)
+                    case .difficultySelection(let type):
+                        DifficultySelectionView(gameType: type, navigationPath: $navigationPath)
+                    case .game(let type, let difficulty):
+                        switch type {
+                        case .classic, .classic16:
+                            SudokuGameView(gameType: type, difficulty: difficulty, navigationPath: $navigationPath)
+                        default:
+                            GamePlaceholderView(gameType: type)
+                        }
                     }
                 }
         }
