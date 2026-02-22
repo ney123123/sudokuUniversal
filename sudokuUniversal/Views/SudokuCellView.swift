@@ -12,6 +12,7 @@ struct SudokuCellView: View {
     let isWrong: Bool
     let cellSize: CGFloat
     let gridSize: Int
+    let regionColor: Color?
 
     var body: some View {
         ZStack {
@@ -56,6 +57,9 @@ struct SudokuCellView: View {
         }
         if isSameRowOrCol || isSameBox {
             return .blue.opacity(0.08)
+        }
+        if let regionColor {
+            return regionColor
         }
         if isPrefilled {
             return Color(.systemGray6)

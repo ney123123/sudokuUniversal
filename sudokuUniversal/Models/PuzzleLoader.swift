@@ -5,6 +5,8 @@ struct PuzzleLoader {
         switch gameType {
         case .classic:   return "sudoku"
         case .classic16: return "sudoku_16"
+        case .jigsaw:    return "sudoku_jigsaw"
+        case .windoku:   return "sudoku_windoku"
         default:         return nil
         }
     }

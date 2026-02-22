@@ -10,4 +10,5 @@ struct SudokuPuzzle: Codable, Identifiable {
     let difficulty_name: String
     let puzzle: [[Int]]
     let solution: [[Int]]
+    let regions: [[Int]]?
 }

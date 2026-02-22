@@ -8,6 +8,7 @@ final class SudokuGameViewModel {
     let boxRows: Int
     let boxCols: Int
     let gameType: SudokuGameType
+    let regions: [[Int]]?
 
     // MARK: - Puzzle State
     var grid: [[Int]]
@@ -56,6 +57,8 @@ final class SudokuGameViewModel {
             self.boxRows = 3
             self.boxCols = 3
         }
+
+        self.regions = puzzle.regions
 
         // Mark prefilled cells (non-zero in original puzzle)
         self.prefilled = puzzle.puzzle.map { row in
@@ -149,7 +152,31 @@ final class SudokuGameViewModel {
     // MARK: - Helpers
 
     func isInSameBox(row1: Int, col1: Int, row2: Int, col2: Int) -> Bool {
+        if let regions = regions {
+            return regions[row1][col1] == regions[row2][col2]
+        }
         return (row1 / boxRows == row2 / boxRows) && (col1 / boxCols == col2 / boxCols)
+    }
+
+    // MARK: - Windoku Helpers
+
+    private static let windokuWindows: [(rows: ClosedRange<Int>, cols: ClosedRange<Int>)] = [
+        (1...3, 1...3),
+        (1...3, 5...7),
+        (5...7, 1...3),
+        (5...7, 5...7),
+    ]
+
+    func isInWindokuRegion(row: Int, col: Int) -> Bool {
+        Self.windokuWindows.contains { $0.rows.contains(row) && $0.cols.contains(col) }
+    }
+
+    func isInSameWindokuWindow(row1: Int, col1: Int, row2: Int, col2: Int) -> Bool {
+        guard gameType == .windoku else { return false }
+        return Self.windokuWindows.contains { window in
+            window.rows.contains(row1) && window.cols.contains(col1) &&
+            window.rows.contains(row2) && window.cols.contains(col2)
+        }
     }
 
     func countOccurrences(of number: Int) -> Int {
