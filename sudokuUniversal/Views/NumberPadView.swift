@@ -4,19 +4,19 @@ struct NumberPadView: View {
     @Bindable var viewModel: SudokuGameViewModel
 
     var body: some View {
-        let gridSize = viewModel.gridSize
+        let maxDigit = viewModel.maxDigit
 
-        if gridSize <= 9 {
-            // Single row for 9x9
+        if maxDigit <= 9 {
+            // Single row for 9 or fewer digits
             HStack(spacing: 8) {
-                ForEach(1...gridSize, id: \.self) { number in
+                ForEach(1...maxDigit, id: \.self) { number in
                     numberButton(number)
                 }
             }
             .padding(.horizontal)
         } else {
-            // Two rows for 16x16
-            let half = gridSize / 2
+            // Two rows for 16
+            let half = maxDigit / 2
             VStack(spacing: 8) {
                 HStack(spacing: 6) {
                     ForEach(1...half, id: \.self) { number in
@@ -24,7 +24,7 @@ struct NumberPadView: View {
                     }
                 }
                 HStack(spacing: 6) {
-                    ForEach((half + 1)...gridSize, id: \.self) { number in
+                    ForEach((half + 1)...maxDigit, id: \.self) { number in
                         numberButton(number)
                     }
                 }
@@ -41,11 +41,11 @@ struct NumberPadView: View {
             viewModel.inputNumber(number)
         } label: {
             Text("\(number)")
-                .font(viewModel.gridSize <= 9
+                .font(viewModel.maxDigit <= 9
                       ? .title2.bold()
                       : .callout.bold())
                 .frame(maxWidth: .infinity)
-                .frame(height: viewModel.gridSize <= 9 ? 50 : 42)
+                .frame(height: viewModel.maxDigit <= 9 ? 50 : 42)
                 .background(isDisabled ? Color.gray.opacity(0.15) : Color.blue.opacity(0.12))
                 .foregroundStyle(isDisabled ? .gray : .blue)
                 .clipShape(RoundedRectangle(cornerRadius: 8))

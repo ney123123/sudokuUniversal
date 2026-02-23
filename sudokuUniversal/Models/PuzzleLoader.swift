@@ -3,11 +3,14 @@ import Foundation
 struct PuzzleLoader {
     static func jsonFilename(for gameType: SudokuGameType) -> String? {
         switch gameType {
-        case .classic:   return "sudoku"
-        case .classic16: return "sudoku_16"
-        case .jigsaw:    return "sudoku_jigsaw"
-        case .windoku:   return "sudoku_windoku"
-        default:         return nil
+        case .classic:      return "sudoku"
+        case .classic16:    return "sudoku_16"
+        case .jigsaw:       return "sudoku_jigsaw"
+        case .windoku:      return "sudoku_windoku"
+        case .killer:       return "sudoku_killer"
+        case .flower:       return "sudoku_flower"
+        case .miniSamurai:  return "sudoku_samurai_4"
+        default:            return nil
         }
     }
 

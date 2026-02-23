@@ -134,7 +134,7 @@ struct SudokuGameView: View {
             loadError = true
             return
         }
-        let vm = SudokuGameViewModel(puzzle: puzzle, gameType: gameType)
+        let vm = SudokuGameViewModel(puzzle: puzzle, gameType: gameType, difficulty: difficulty)
         self.viewModel = vm
         self.loadError = false
         vm.startTimer()

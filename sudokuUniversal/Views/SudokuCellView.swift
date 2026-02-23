@@ -13,28 +13,50 @@ struct SudokuCellView: View {
     let cellSize: CGFloat
     let gridSize: Int
     let regionColor: Color?
+    var isNonExistent: Bool = false
+    var cageSum: Int? = nil
+    var cageBorders: (top: Bool, right: Bool, bottom: Bool, left: Bool) = (false, false, false, false)
+    var isCageHighlighted: Bool = false
 
     var body: some View {
-        ZStack {
-            Rectangle()
-                .fill(backgroundColor)
-
-            if value != 0 {
-                Text(displayText)
-                    .font(numberFont)
-                    .fontWeight(isPrefilled ? .bold : .regular)
-                    .foregroundColor(isPrefilled ? .primary : .blue)
-            }
-        }
-        .frame(width: cellSize, height: cellSize)
-        .overlay {
-            if isSelected {
+        if isNonExistent {
+            Color.clear
+                .frame(width: cellSize, height: cellSize)
+                .contentShape(Rectangle().size(.zero))
+        } else {
+            ZStack(alignment: .topLeading) {
                 Rectangle()
-                    .stroke(Color.blue, lineWidth: 2)
+                    .fill(backgroundColor)
+
+                if value != 0 {
+                    Text(displayText)
+                        .font(numberFont)
+                        .fontWeight(isPrefilled ? .bold : .regular)
+                        .foregroundColor(isPrefilled ? .primary : .blue)
+                        .frame(width: cellSize, height: cellSize)
+                }
+
+                // Cage sum label (top-left corner)
+                if let cageSum {
+                    Text("\(cageSum)")
+                        .font(.system(size: cellSize * 0.25))
+                        .foregroundColor(isCageHighlighted ? Color(red: 0, green: 0, blue: 0.7) : .secondary)
+                        .padding(3)
+                }
+
+                // Cage dashed borders
+                cageBorderOverlay
             }
+            .frame(width: cellSize, height: cellSize)
+            .overlay {
+                if isSelected {
+                    Rectangle()
+                        .stroke(Color.blue, lineWidth: 2)
+                }
+            }
+            .contentShape(Rectangle())
+            .offset(x: isWrong ? shakeOffset : 0)
         }
-        .contentShape(Rectangle())
-        .offset(x: isWrong ? shakeOffset : 0)
     }
 
     private var displayText: String {
@@ -65,6 +87,35 @@ struct SudokuCellView: View {
             return Color(.systemGray6)
         }
         return .clear
+    }
+
+    @ViewBuilder
+    private var cageBorderOverlay: some View {
+        if cageBorders.top || cageBorders.right || cageBorders.bottom || cageBorders.left {
+            Canvas { context, size in
+                let dash: [CGFloat] = isCageHighlighted ? [] : [3, 2]
+                let lineWidth: CGFloat = isCageHighlighted ? 4 : 1
+                var path = Path()
+                if cageBorders.top {
+                    path.move(to: CGPoint(x: 0, y: 0.5))
+                    path.addLine(to: CGPoint(x: size.width, y: 0.5))
+                }
+                if cageBorders.bottom {
+                    path.move(to: CGPoint(x: 0, y: size.height - 0.5))
+                    path.addLine(to: CGPoint(x: size.width, y: size.height - 0.5))
+                }
+                if cageBorders.left {
+                    path.move(to: CGPoint(x: 0.5, y: 0))
+                    path.addLine(to: CGPoint(x: 0.5, y: size.height))
+                }
+                if cageBorders.right {
+                    path.move(to: CGPoint(x: size.width - 0.5, y: 0))
+                    path.addLine(to: CGPoint(x: size.width - 0.5, y: size.height))
+                }
+                context.stroke(path, with: .color(isCageHighlighted ? Color(red: 0, green: 0, blue: 0.7) : .primary.opacity(0.6)), style: StrokeStyle(lineWidth: lineWidth, dash: dash))
+            }
+            .allowsHitTesting(false)
+        }
     }
 
     @State private var shakeOffset: CGFloat = 0
